@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para você</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    min-height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #ffd97a 0%, #ff9a9e 50%, #fecfef 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 480px;
+    width: 90%;
+    margin: 40px auto;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  }
+
+  .foto {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 6px solid #ffb84d;
+    margin-bottom: 20px;
+  }
+
+  .foto-placeholder {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 6px dashed #ffb84d;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: #ffb84d;
+    background: #fff8ec;
+  }
+
+  h1 {
+    color: #d6336c;
+    font-size: 1.4rem;
+    margin: 0 0 28px;
+    line-height: 1.4;
+  }
+
+  button {
+    padding: 14px 32px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    background: #d6336c;
+    color: white;
+  }
+
+  button:hover {
+    transform: scale(1.06);
+  }
+
+  .frases {
+    text-align: left;
+    margin: 0 0 20px;
+  }
+
+  .frase {
+    color: #b8003f;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin: 0 0 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: surgir 0.6s ease forwards;
+  }
+
+  .frase.final {
+    font-weight: bold;
+  }
+
+  @keyframes surgir {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .galeria {
+    display: none;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .galeria img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .player {
+    display: none;
+    margin-top: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+  }
+
+  .corações {
+    display: none;
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .coração {
+    position: absolute;
+    top: -40px;
+    font-size: 24px;
+    animation: cair linear infinite;
+  }
+
+  @keyframes cair {
+    to { transform: translateY(110vh) rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <img class="foto" id="foto" src="foto.jpg" alt="Nós dois" onerror="this.outerHTML='<div class=\'foto-placeholder\'>📷</div>'">
+
+  <div id="inicio">
+    <h1>Tem umas coisas que eu preciso te lembrar.</h1>
+    <button id="btnRevelar" onclick="revelar()">Clique aqui</button>
+  </div>
+
+  <div class="frases" id="frases"></div>
+
+  <div class="galeria" id="galeria"></div>
+
+  <div class="player" id="playerWrapper">
+    <div id="player"></div>
+  </div>
+</div>
+
+<div class="corações" id="corações"></div>
+
+<script>
+  const frases = [
+    "Você é mais forte do que imagina e mais capaz do que qualquer desafio.",
+    "Nunca duvide da mulher incrível que você é.",
+    "Seu brilho não depende da aprovação de ninguém.",
+    "Você inspira as pessoas apenas sendo você.",
+    "Sua inteligência e sua força são tão bonitas quanto o seu sorriso.",
+    "O mundo fica melhor porque você existe.",
+    "Você merece tudo aquilo que sonha conquistar.",
+    "Sua coragem sempre será maior que os seus medos.",
+    "Você transforma dificuldades em aprendizado.",
+    "Confie em si mesma, porque eu confio todos os dias.",
+    "Você é um sol, e eu adoro me bronzear. Você ilumina e aquece meu coração e me faz feliz. Que Deus me dê bastante saúde para eu poder continuar ao seu lado, sempre!"
+  ];
+
+  function revelar() {
+    document.getElementById('inicio').style.display = 'none';
+
+    const iframe = document.createElement('iframe');
+    iframe.width = '100%';
+    iframe.height = '100%';
+    iframe.frameBorder = '0';
+    iframe.allow = 'autoplay; encrypted-media';
+    iframe.allowFullscreen = true;
+    iframe.src = 'https://www.youtube.com/embed/gg3sZeFqMtg?autoplay=1&rel=0';
+    document.getElementById('player').appendChild(iframe);
+
+    const container = document.getElementById('frases');
+    const intervalo = 3200;
+
+    frases.forEach((texto, i) => {
+      setTimeout(() => {
+        const p = document.createElement('p');
+        p.className = 'frase' + (i === frases.length - 1 ? ' final' : '');
+        p.textContent = texto;
+        container.appendChild(p);
+
+        if (i === frases.length - 1) {
+          carregarGaleria();
+          lançarCorações();
+          document.getElementById('playerWrapper').style.display = 'block';
+        }
+      }, i * intervalo);
+    });
+  }
+
+  function carregarGaleria() {
+    const galeria = document.getElementById('galeria');
+    const totalFotos = 6;
+
+    for (let i = 1; i <= totalFotos; i++) {
+      const img = document.createElement('img');
+      img.src = `galeria${i}.jpg`;
+      img.alt = `Foto ${i}`;
+      img.onerror = () => img.remove();
+      galeria.appendChild(img);
+    }
+
+    galeria.style.display = 'grid';
+  }
+
+  function lançarCorações() {
+    const container = document.getElementById('corações');
+    container.style.display = 'block';
+    for (let i = 0; i < 30; i++) {
+      const c = document.createElement('div');
+      c.className = 'coração';
+      c.textContent = '❤️';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.animationDuration = (2 + Math.random() * 3) + 's';
+      c.style.animationDelay = (Math.random() * 2) + 's';
+      c.style.fontSize = (16 + Math.random() * 20) + 'px';
+      container.appendChild(c);
+    }
+  }
+</script>
+
+</body>
+</html>
